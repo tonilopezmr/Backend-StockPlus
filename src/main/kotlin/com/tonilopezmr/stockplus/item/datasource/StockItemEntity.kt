@@ -4,6 +4,8 @@ import com.tonilopezmr.stockplus.categories.datasource.CategoryEntity
 import com.tonilopezmr.stockplus.categories.datasource.toDomain
 import com.tonilopezmr.stockplus.categories.datasource.toEntity
 import com.tonilopezmr.stockplus.item.model.StockItem
+import org.hibernate.annotations.Type
+import java.util.UUID
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
@@ -16,7 +18,7 @@ import javax.persistence.Table
 @Entity
 @Table(name = "StockItem")
 data class StockItemEntity(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) val id: String,
+    @Id @GeneratedValue(strategy = GenerationType.AUTO) val id: UUID,
     val name: String,
     val price: Double,
     val quantity: Int,
@@ -27,7 +29,7 @@ data class StockItemEntity(
 )
 
 fun StockItemEntity.toDomain(): StockItem = StockItem(
-    id,
+    id.toString(),
     name,
     price,
     quantity,
@@ -35,7 +37,7 @@ fun StockItemEntity.toDomain(): StockItem = StockItem(
 )
 
 fun StockItem.toEntity(): StockItemEntity = StockItemEntity(
-    id,
+    if (id.isEmpty()) UUID.randomUUID() else UUID.fromString(id),
     name,
     price,
     quantity,

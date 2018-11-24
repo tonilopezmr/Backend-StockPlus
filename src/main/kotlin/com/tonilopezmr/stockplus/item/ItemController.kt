@@ -1,6 +1,8 @@
 package com.tonilopezmr.stockplus.item
 
+import com.tonilopezmr.stockplus.base.created
 import com.tonilopezmr.stockplus.base.pagination.with
+import com.tonilopezmr.stockplus.base.success
 import com.tonilopezmr.stockplus.item.model.ItemError
 import com.tonilopezmr.stockplus.item.model.StockItem
 import com.tonilopezmr.stockplus.item.model.StockItemRequest
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import springfox.documentation.annotations.ApiIgnore
 
 @RestController
 @RequestMapping("/v1/items")
@@ -54,9 +55,6 @@ class ItemController(
   private fun <A> error(itemError: ItemError): ResponseEntity<A> = when (itemError) {
     ItemError.NotFound -> ResponseEntity.notFound()
     ItemError.StorageError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    ItemError.CategoryNotExists -> ResponseEntity.notFound()
+    ItemError.CategoryNotExists -> ResponseEntity.badRequest()
   }.build()
-
-  private fun <A> success(value: A): ResponseEntity<A> = ResponseEntity.ok(value)
-  private fun <A> created(value: A): ResponseEntity<A> = ResponseEntity(value, HttpStatus.CREATED)
 }

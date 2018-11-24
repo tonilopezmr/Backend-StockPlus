@@ -1,6 +1,6 @@
 package com.tonilopezmr.stockplus.item.model
 
-import com.tonilopezmr.stockplus.categories.Category
+import com.tonilopezmr.stockplus.categories.model.Category
 
 data class StockItem(
     val id: String,

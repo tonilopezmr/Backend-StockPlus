@@ -1,6 +1,7 @@
 package com.tonilopezmr.stockplus.categories.datasource
 
-import com.tonilopezmr.stockplus.categories.Category
+import com.tonilopezmr.stockplus.categories.model.Category
+import java.util.UUID
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -10,16 +11,16 @@ import javax.persistence.Table
 @Entity
 @Table(name = "Category")
 data class CategoryEntity(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) val id: String,
+    @Id @GeneratedValue(strategy = GenerationType.AUTO) val id: UUID,
     val name: String
 )
 
 fun CategoryEntity.toDomain(): Category = Category(
-    id,
+    id.toString(),
     name
 )
 
 fun Category.toEntity(): CategoryEntity = CategoryEntity(
-    id,
+    if (id.isEmpty()) UUID.randomUUID() else UUID.fromString(id),
     name
 )
