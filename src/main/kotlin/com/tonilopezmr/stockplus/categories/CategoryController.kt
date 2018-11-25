@@ -10,6 +10,7 @@ import com.tonilopezmr.stockplus.categories.model.toDomain
 import com.tonilopezmr.stockplus.categories.usecase.CreateCategory
 import com.tonilopezmr.stockplus.categories.usecase.DeleteCategory
 import com.tonilopezmr.stockplus.categories.usecase.GetCategories
+import com.tonilopezmr.stockplus.categories.usecase.GetCategory
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import javax.xml.ws.Response
 
 @RestController
 @RequestMapping("/v1/categories")
@@ -31,7 +33,8 @@ import org.springframework.web.bind.annotation.RestController
 class CategoryController(
     private val getCategories: GetCategories,
     private val createCategory: CreateCategory,
-    private val deleteCategory: DeleteCategory
+    private val deleteCategory: DeleteCategory,
+    private val getCategory: GetCategory
 ) {
 
   @GetMapping()
@@ -44,7 +47,7 @@ class CategoryController(
       @RequestParam("page_size", required = false, defaultValue = "0") pageSize: Int
   ): ResponseEntity<List<Category>> = getCategories(page with pageSize).fold(::error, ::success)
 
-  @PostMapping("/")
+  @PostMapping()
   @ApiOperation(value = "Create a new Category")
   @ApiResponses(
       ApiResponse(code = 201, response = Category::class, message = "Category created"),
@@ -62,6 +65,13 @@ class CategoryController(
       ApiResponse(code = 404, message = "Category was not found")
   )
   fun delete(@PathVariable id: String): ResponseEntity<Category> = deleteCategory(id).fold(::error, ::success)
+
+  @GetMapping("/{id}")
+  @ApiOperation(value = "Get a category by id")
+  @ApiResponses(
+      ApiResponse(code = 200, response = Category::class, responseContainer = "List", message = "Category")
+  )
+  fun getById(@PathVariable id: String): ResponseEntity<Category> = getCategory(id).fold(::error, ::success)
 
   private fun <A> error(categoryError: CategoryError): ResponseEntity<A> = when (categoryError) {
     CategoryError.StorageError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

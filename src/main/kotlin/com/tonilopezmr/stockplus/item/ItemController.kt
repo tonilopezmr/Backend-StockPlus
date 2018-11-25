@@ -7,9 +7,12 @@ import com.tonilopezmr.stockplus.categories.model.Category
 import com.tonilopezmr.stockplus.item.model.ItemError
 import com.tonilopezmr.stockplus.item.model.StockItem
 import com.tonilopezmr.stockplus.item.model.StockItemRequest
+import com.tonilopezmr.stockplus.item.model.StockItemResponse
 import com.tonilopezmr.stockplus.item.model.toDomain
+import com.tonilopezmr.stockplus.item.model.toResponse
 import com.tonilopezmr.stockplus.item.usecase.CreateItem
 import com.tonilopezmr.stockplus.item.usecase.DeleteItem
+import com.tonilopezmr.stockplus.item.usecase.GetItem
 import com.tonilopezmr.stockplus.item.usecase.GetItems
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -32,39 +35,55 @@ import org.springframework.web.bind.annotation.RestController
 class ItemController(
     private val getItems: GetItems,
     private val createItem: CreateItem,
-    private val deleteItem: DeleteItem
+    private val deleteItem: DeleteItem,
+    private val getItem: GetItem
 ) {
 
   @GetMapping()
   @ApiOperation(value = "Get all items")
   @ApiResponses(
-      ApiResponse(code = 200, response = StockItem::class, responseContainer = "List", message = "Items")
+      ApiResponse(code = 200, response = StockItemResponse::class, responseContainer = "List", message = "Items")
   )
   fun getAll(
       @RequestParam("page", required = false, defaultValue = "0") page: Int,
       @RequestParam("page_size", required = false, defaultValue = "0") pageSize: Int
-  ): ResponseEntity<List<StockItem>> = getItems(page with pageSize).fold(::error, ::success)
+  ): ResponseEntity<List<StockItemResponse>> = getItems(page with pageSize).fold(::error, ::success)
 
-
-  @PostMapping("/")
+  @PostMapping()
   @ApiOperation(value = "Create a new Item")
   @ApiResponses(
-      ApiResponse(code = 201, response = StockItem::class, message = "Item created"),
+      ApiResponse(code = 201, response = StockItemResponse::class, message = "Item created"),
       ApiResponse(code = 400, message = "Validation error message"),
       ApiResponse(code = 404, message = "Category not exists")
   )
   fun create(
       @RequestBody stockItemRequest: StockItemRequest
-  ): ResponseEntity<StockItem> = createItem(stockItemRequest.toDomain()).fold(::error, ::created)
+  ): ResponseEntity<StockItemResponse> = createItem(stockItemRequest.toDomain()).fold(::error, ::created)
 
   @DeleteMapping("/{id}")
   @ApiOperation(value = "Delete an existing Item")
   @ApiResponses(
-      ApiResponse(code = 200, response = StockItem::class, message = "Item removed"),
+      ApiResponse(code = 200, response = StockItemResponse::class, message = "Item removed"),
       ApiResponse(code = 404, message = "Item was not found")
   )
-  fun delete(@PathVariable id: String): ResponseEntity<StockItem> = deleteItem(id).fold(::error, ::success)
+  fun delete(@PathVariable id: String): ResponseEntity<StockItemResponse> = deleteItem(id).fold(::error, ::success)
 
+  @GetMapping("/{id}")
+  @ApiOperation(value = "Get item by id")
+  @ApiResponses(
+      ApiResponse(code = 200, response = StockItemResponse::class, responseContainer = "List", message = "Item")
+  )
+  fun getById(@PathVariable id: String): ResponseEntity<StockItemResponse> = getItem(id).fold(::error, ::success)
+
+
+  private fun success(items: List<StockItem>): ResponseEntity<List<StockItemResponse>> =
+      success(items.map { it.toResponse() })
+
+  private fun success(item: StockItem): ResponseEntity<StockItemResponse> =
+      success(item.toResponse())
+
+  private fun created(item: StockItem): ResponseEntity<StockItemResponse> =
+      created(item.toResponse())
 
   private fun <A> error(itemError: ItemError): ResponseEntity<A> = when (itemError) {
     ItemError.NotFound -> ResponseEntity.notFound()

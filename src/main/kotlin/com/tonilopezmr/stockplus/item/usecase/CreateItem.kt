@@ -16,7 +16,7 @@ class CreateItem(
 ) {
 
   operator fun invoke(stockItem: StockItem): Either<ItemError, StockItem> =
-      getCategory(stockItem.id)
+      getCategory(stockItem.category.id)
           .mapLeft { ItemError.CategoryNotExists }
           .flatMap { itemDataSource.create(stockItem).toEither { ItemError.StorageError } }
 
