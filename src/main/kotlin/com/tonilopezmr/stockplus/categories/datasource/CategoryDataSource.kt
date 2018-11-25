@@ -8,6 +8,7 @@ import com.tonilopezmr.stockplus.base.pagination.Pagination
 import com.tonilopezmr.stockplus.base.pagination.request
 import com.tonilopezmr.stockplus.categories.model.Category
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class CategoryDataSource(private val categoryDao: CategoryDao) {
@@ -23,9 +24,14 @@ class CategoryDataSource(private val categoryDao: CategoryDao) {
   }
 
   fun getById(id: String): Try<Option<Category>> = TryLogger(this::class) {
-    categoryDao.findById(id)
+    categoryDao.findById(UUID.fromString(id))
         .orElse(null)
         .toOption()
         .map { it.toDomain() }
+  }
+
+  fun delete(category: Category): Try<Category> = TryLogger(this::class) {
+    categoryDao.delete(category.toEntity())
+    category
   }
 }

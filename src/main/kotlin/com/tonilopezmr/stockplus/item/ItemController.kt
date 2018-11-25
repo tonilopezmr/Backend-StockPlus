@@ -3,11 +3,13 @@ package com.tonilopezmr.stockplus.item
 import com.tonilopezmr.stockplus.base.created
 import com.tonilopezmr.stockplus.base.pagination.with
 import com.tonilopezmr.stockplus.base.success
+import com.tonilopezmr.stockplus.categories.model.Category
 import com.tonilopezmr.stockplus.item.model.ItemError
 import com.tonilopezmr.stockplus.item.model.StockItem
 import com.tonilopezmr.stockplus.item.model.StockItemRequest
 import com.tonilopezmr.stockplus.item.model.toDomain
 import com.tonilopezmr.stockplus.item.usecase.CreateItem
+import com.tonilopezmr.stockplus.item.usecase.DeleteItem
 import com.tonilopezmr.stockplus.item.usecase.GetItems
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -15,7 +17,9 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,7 +31,8 @@ import org.springframework.web.bind.annotation.RestController
 @Api(value = "Items", description = "Items resources")
 class ItemController(
     private val getItems: GetItems,
-    private val createItem: CreateItem
+    private val createItem: CreateItem,
+    private val deleteItem: DeleteItem
 ) {
 
   @GetMapping()
@@ -51,6 +56,15 @@ class ItemController(
   fun create(
       @RequestBody stockItemRequest: StockItemRequest
   ): ResponseEntity<StockItem> = createItem(stockItemRequest.toDomain()).fold(::error, ::created)
+
+  @DeleteMapping("/{id}")
+  @ApiOperation(value = "Delete an existing Item")
+  @ApiResponses(
+      ApiResponse(code = 200, response = StockItem::class, message = "Item removed"),
+      ApiResponse(code = 404, message = "Item was not found")
+  )
+  fun delete(@PathVariable id: String): ResponseEntity<StockItem> = deleteItem(id).fold(::error, ::success)
+
 
   private fun <A> error(itemError: ItemError): ResponseEntity<A> = when (itemError) {
     ItemError.NotFound -> ResponseEntity.notFound()
