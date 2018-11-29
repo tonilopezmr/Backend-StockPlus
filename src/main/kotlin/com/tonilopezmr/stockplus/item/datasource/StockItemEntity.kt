@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
+import javax.persistence.Lob
 import javax.persistence.ManyToOne
 import javax.persistence.Table
 
@@ -22,7 +23,7 @@ data class StockItemEntity(
     val name: String,
     val price: Double,
     val quantity: Int,
-
+    @Lob val photo: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     val category: CategoryEntity
@@ -33,6 +34,7 @@ fun StockItemEntity.toDomain(): StockItem = StockItem(
     name,
     price,
     quantity,
+    photo,
     category.toDomain()
 )
 
@@ -41,5 +43,6 @@ fun StockItem.toEntity(): StockItemEntity = StockItemEntity(
     name,
     price,
     quantity,
+    photo,
     category.toEntity()
 )

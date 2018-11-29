@@ -7,5 +7,6 @@ data class StockItem(
     val name: String,
     val price: Double,
     val quantity: Int,
+    val photo: String,
     val category: Category
 )
