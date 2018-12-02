@@ -8,6 +8,7 @@ import com.tonilopezmr.stockplus.item.model.ItemError
 import com.tonilopezmr.stockplus.item.model.StockItem
 import com.tonilopezmr.stockplus.item.model.StockItemRequest
 import com.tonilopezmr.stockplus.item.model.StockItemResponse
+import com.tonilopezmr.stockplus.item.model.StockItemResponses
 import com.tonilopezmr.stockplus.item.model.toDomain
 import com.tonilopezmr.stockplus.item.model.toResponse
 import com.tonilopezmr.stockplus.item.usecase.CreateItem
@@ -76,8 +77,8 @@ class ItemController(
   fun getById(@PathVariable id: String): ResponseEntity<StockItemResponse> = getItem(id).fold(::error, ::success)
 
 
-  private fun success(items: List<StockItem>): ResponseEntity<List<StockItemResponse>> =
-      success(items.map { it.toResponse() })
+  private fun success(items: List<StockItem>): ResponseEntity<StockItemResponses> =
+      success(items.map(StockItem::toResponse))
 
   private fun success(item: StockItem): ResponseEntity<StockItemResponse> =
       success(item.toResponse())

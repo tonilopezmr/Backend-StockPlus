@@ -1,5 +1,7 @@
 package com.tonilopezmr.stockplus.item.model
 
+typealias StockItemResponses = List<StockItemResponse>
+
 data class StockItemResponse(
     val id: String,
     val name: String,
