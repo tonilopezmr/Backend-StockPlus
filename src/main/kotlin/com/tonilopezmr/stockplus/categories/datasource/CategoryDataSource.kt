@@ -27,7 +27,7 @@ class CategoryDataSource(private val categoryDao: CategoryDao) {
     categoryDao.findById(UUID.fromString(id))
         .orElse(null)
         .toOption()
-        .map { it.toDomain() }
+        .map(CategoryEntity::toDomain)
   }
 
   fun delete(category: Category): Try<Category> = TryLogger(this::class) {
