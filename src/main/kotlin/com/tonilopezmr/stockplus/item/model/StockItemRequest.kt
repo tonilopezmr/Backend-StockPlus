@@ -6,8 +6,10 @@ data class StockItemRequest(
     val name: String,
     val price: Double,
     val quantity: Int,
-    val photo: List<String>,
-    val category: String
+    val photo: List<String>?,
+    val category: String,
+    val referenceUrl: String,
+    val datasheet: String?
 )
 
 fun StockItemRequest.toDomain(): StockItem = StockItem(
@@ -15,6 +17,8 @@ fun StockItemRequest.toDomain(): StockItem = StockItem(
     name = name,
     price = price,
     quantity = quantity,
-    photo = photo[0],
-    category = Category(category, "")
+    photo = photo?.get(0) ?: "",
+    category = Category(category, ""),
+    referenceUrl = referenceUrl,
+    datasheet = datasheet ?: ""
 )

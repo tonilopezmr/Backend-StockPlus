@@ -8,5 +8,7 @@ data class StockItem(
     val price: Double,
     val quantity: Int,
     val photo: String,
-    val category: Category
+    val category: Category,
+    val referenceUrl: String,
+    val datasheet: String
 )

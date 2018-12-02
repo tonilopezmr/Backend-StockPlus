@@ -4,7 +4,6 @@ import com.tonilopezmr.stockplus.categories.datasource.CategoryEntity
 import com.tonilopezmr.stockplus.categories.datasource.toDomain
 import com.tonilopezmr.stockplus.categories.datasource.toEntity
 import com.tonilopezmr.stockplus.item.model.StockItem
-import org.hibernate.annotations.Type
 import java.util.UUID
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -26,7 +25,9 @@ data class StockItemEntity(
     @Lob val photo: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    val category: CategoryEntity
+    val category: CategoryEntity,
+    val referenceUrl: String,
+    val datasheet: String
 )
 
 fun StockItemEntity.toDomain(): StockItem = StockItem(
@@ -35,7 +36,9 @@ fun StockItemEntity.toDomain(): StockItem = StockItem(
     price,
     quantity,
     photo,
-    category.toDomain()
+    category.toDomain(),
+    referenceUrl,
+    datasheet
 )
 
 fun StockItem.toEntity(): StockItemEntity = StockItemEntity(
@@ -44,5 +47,7 @@ fun StockItem.toEntity(): StockItemEntity = StockItemEntity(
     price,
     quantity,
     photo,
-    category.toEntity()
+    category.toEntity(),
+    referenceUrl,
+    datasheet
 )

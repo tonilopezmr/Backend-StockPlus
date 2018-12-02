@@ -8,14 +8,18 @@ data class StockItemResponse(
     val price: Double,
     val quantity: Int,
     val photo: String,
-    val category: String
+    val category: String,
+    val referenceUrl: String,
+    val datasheet: String
 )
 
 fun StockItem.toResponse(): StockItemResponse = StockItemResponse(
-    id = id,
-    name = name,
-    price = price,
-    quantity = quantity,
-    photo = photo,
-    category = category.id
+    id,
+    name,
+    price,
+    quantity,
+    photo,
+    category.id,
+    referenceUrl,
+    datasheet
 )
