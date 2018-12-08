@@ -28,4 +28,13 @@ class ProjectDataSource(
         .toOption()
         .map(ProjectEntity::toDomain)
   }
+
+  fun create(project: Project): Try<Project> = TryLogger(this::class) {
+    projectDao.save(project.toEntity()).toDomain()
+  }
+
+  fun delete(project: Project): Try<Project> = TryLogger(this::class) {
+    projectDao.delete(project.toEntity())
+    project
+  }
 }

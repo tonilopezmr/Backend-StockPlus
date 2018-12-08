@@ -2,6 +2,7 @@ package com.tonilopezmr.stockplus.projects.datasource
 
 import com.tonilopezmr.stockplus.item.datasource.StockItemEntity
 import com.tonilopezmr.stockplus.item.datasource.toDomain
+import com.tonilopezmr.stockplus.item.datasource.toEntity
 import com.tonilopezmr.stockplus.projects.model.ItemQuantity
 import com.tonilopezmr.stockplus.projects.model.Project
 import java.util.UUID
@@ -20,7 +21,7 @@ import javax.persistence.Table
 @Entity
 @Table(name = "ItemQuantity")
 data class ItemQuantityEntity(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) val id: UUID,
+    @Id
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item")
     val item: StockItemEntity,
@@ -52,4 +53,16 @@ fun ProjectEntity.toDomain(): Project = Project(
 fun ItemQuantityEntity.toDomain(): ItemQuantity = ItemQuantity(
     item.toDomain(),
     quantity
+)
+
+fun ItemQuantity.toEntity(): ItemQuantityEntity = ItemQuantityEntity(
+    item.toEntity(),
+    quantity
+)
+
+fun Project.toEntity(): ProjectEntity = ProjectEntity(
+    if (id.isEmpty()) UUID.randomUUID() else UUID.fromString(id),
+    name,
+    items.map(ItemQuantity::toEntity),
+    items.map { it.price }.sum()
 )

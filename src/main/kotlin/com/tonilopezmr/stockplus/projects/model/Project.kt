@@ -14,4 +14,7 @@ data class Project(
 data class ItemQuantity(
     val item: StockItem,
     val quantity: Int
-)
+) {
+  val price: Double
+    get() = item.price * quantity
+}
