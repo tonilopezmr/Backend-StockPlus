@@ -57,6 +57,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+    implementation('org.springframework.boot:spring-boot-starter-security')
+
     ktlint "com.github.shyiko:ktlint:0.20.0"
 
     def arrowVersion = "0.8.1"
